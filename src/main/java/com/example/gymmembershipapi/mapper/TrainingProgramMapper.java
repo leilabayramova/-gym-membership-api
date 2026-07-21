@@ -2,6 +2,7 @@ package com.example.gymmembershipapi.mapper;
 
 import com.example.gymmembershipapi.dto.CreateTrainingProgramRequestDto;
 import com.example.gymmembershipapi.dto.TrainingProgramResponseDto;
+import com.example.gymmembershipapi.dto.UpdateTrainingProgramRequestDto;
 import com.example.gymmembershipapi.entity.TrainerEntity;
 import com.example.gymmembershipapi.entity.TrainingProgramEntity;
 
@@ -31,5 +32,16 @@ public interface TrainingProgramMapper {
                 .monthlyPrice(trainingProgram.getMonthlyPrice())
                 .trainerId(trainingProgram.getTrainer().getId())
                 .build();
+    }
+    static void updateEntity(
+            TrainingProgramEntity trainingProgram,
+            UpdateTrainingProgramRequestDto requestDto,
+            TrainerEntity trainer
+    ) {
+        trainingProgram.setName(requestDto.getName());
+        trainingProgram.setDescription(requestDto.getDescription());
+        trainingProgram.setDurationInWeeks(requestDto.getDurationInWeeks());
+        trainingProgram.setMonthlyPrice(requestDto.getMonthlyPrice());
+        trainingProgram.setTrainer(trainer);
     }
 }

@@ -3,6 +3,7 @@ package com.example.gymmembershipapi.mapper;
 
 import com.example.gymmembershipapi.dto.CreateTrainerRequestDto;
 import com.example.gymmembershipapi.dto.TrainerResponseDto;
+import com.example.gymmembershipapi.dto.UpdateTrainerRequestDto;
 import com.example.gymmembershipapi.entity.TrainerEntity;
 
 public interface TrainerMapper {
@@ -24,5 +25,15 @@ public interface TrainerMapper {
                 .phoneNumber(trainer.getPhoneNumber())
                 .specialization(trainer.getSpecialization())
                 .build();
+    }
+
+    static void updateEntity(
+            TrainerEntity trainer,
+            UpdateTrainerRequestDto requestDto
+    ) {
+        trainer.setFullName(requestDto.getFullName());
+        trainer.setEmail(requestDto.getEmail());
+        trainer.setPhoneNumber(requestDto.getPhoneNumber());
+        trainer.setSpecialization(requestDto.getSpecialization());
     }
 }

@@ -7,4 +7,5 @@ public interface TrainerRepository
         extends JpaRepository<TrainerEntity, Long> {
 
     boolean existsByEmailIgnoreCase(String email);
+    boolean existsByEmailIgnoreCaseAndIdNot(String email, Long id);
 }

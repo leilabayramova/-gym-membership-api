@@ -2,6 +2,7 @@ package com.example.gymmembershipapi.controller;
 
 import com.example.gymmembershipapi.dto.CreateTrainingProgramRequestDto;
 import com.example.gymmembershipapi.dto.TrainingProgramResponseDto;
+import com.example.gymmembershipapi.dto.UpdateTrainingProgramRequestDto;
 import com.example.gymmembershipapi.service.TrainingProgramService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -32,5 +33,18 @@ public class TrainingProgramController {
     @GetMapping
     public List<TrainingProgramResponseDto> getAll() {
         return trainingProgramService.getAll();
+    }
+    @PutMapping("/{id}")
+    public TrainingProgramResponseDto update(
+            @PathVariable Long id,
+            @RequestBody UpdateTrainingProgramRequestDto requestDto
+    ) {
+        return trainingProgramService.update(id, requestDto);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
+        trainingProgramService.delete(id);
     }
 }
