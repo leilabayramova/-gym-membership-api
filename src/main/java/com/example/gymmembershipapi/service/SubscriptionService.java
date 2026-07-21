@@ -134,14 +134,14 @@ public class SubscriptionService {
     }
 
     public void delete(Long id) {
-        SubscriptionEntity subscription =
-                subscriptionRepository.findById(id)
-                        .orElseThrow(() ->
-                                new ResourceNotFoundException(
-                                        "Subscription not found with id: " + id
-                                )
-                        );
+        SubscriptionEntity subscription = subscriptionRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Subscription not found with id: " + id
+                        )
+                );
 
-        subscriptionRepository.delete(subscription);
+        subscription.setActive(false);
+        subscriptionRepository.save(subscription);
     }
 }

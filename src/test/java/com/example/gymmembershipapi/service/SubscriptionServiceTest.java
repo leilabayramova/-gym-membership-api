@@ -268,19 +268,21 @@ class SubscriptionServiceTest {
     }
 
     @Test
-    void delete_shouldDeleteSubscription() {
-        SubscriptionEntity subscription =
-                SubscriptionEntity.builder()
-                        .id(1L)
-                        .active(true)
-                        .build();
+    void delete_shouldDeactivateSubscription() {
+        SubscriptionEntity subscription = SubscriptionEntity.builder()
+                .id(1L)
+                .active(true)
+                .build();
 
         when(subscriptionRepository.findById(1L))
                 .thenReturn(Optional.of(subscription));
 
         subscriptionService.delete(1L);
 
-        verify(subscriptionRepository)
-                .delete(subscription);
+        assertFalse(subscription.getActive());
+
+        verify(subscriptionRepository).save(subscription);
+        verify(subscriptionRepository, never())
+                .delete(any(SubscriptionEntity.class));
     }
 }
