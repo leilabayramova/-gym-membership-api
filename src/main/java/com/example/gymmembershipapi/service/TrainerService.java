@@ -4,6 +4,8 @@ import com.example.gymmembershipapi.dto.CreateTrainerRequestDto;
 import com.example.gymmembershipapi.dto.TrainerResponseDto;
 import com.example.gymmembershipapi.dto.UpdateTrainerRequestDto;
 import com.example.gymmembershipapi.entity.TrainerEntity;
+import com.example.gymmembershipapi.exception.DuplicateResourceException;
+import com.example.gymmembershipapi.exception.ResourceNotFoundException;
 import com.example.gymmembershipapi.mapper.TrainerMapper;
 import com.example.gymmembershipapi.repository.TrainerRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +20,10 @@ public class TrainerService {
     private final TrainerRepository trainerRepository;
 
     public TrainerResponseDto create(CreateTrainerRequestDto requestDto) {
+
         if (trainerRepository.existsByEmailIgnoreCase(requestDto.getEmail())) {
-            throw new RuntimeException(
-                    "Trainer already exists with email: " + requestDto.getEmail()
+            throw new DuplicateResourceException(
+                    "Trainer with this email already exists"
             );
         }
 
@@ -33,7 +36,9 @@ public class TrainerService {
     public TrainerResponseDto getById(Long id) {
         TrainerEntity trainer = trainerRepository.findById(id)
                 .orElseThrow(() ->
-                        new RuntimeException("Trainer not found with id: " + id)
+                        new ResourceNotFoundException(
+                                "Trainer not found with id: " + id
+                        )
                 );
 
         return TrainerMapper.toResponseDto(trainer);
@@ -51,13 +56,17 @@ public class TrainerService {
             UpdateTrainerRequestDto requestDto
     ) {
         TrainerEntity trainer = trainerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Trainer not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Trainer not found with id: " + id
+                        )
+                );
 
         if (trainerRepository.existsByEmailIgnoreCaseAndIdNot(
                 requestDto.getEmail(),
                 id
         )) {
-            throw new RuntimeException(
+            throw new DuplicateResourceException(
                     "Trainer with this email already exists"
             );
         }
@@ -71,7 +80,11 @@ public class TrainerService {
 
     public void delete(Long id) {
         TrainerEntity trainer = trainerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Trainer not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Trainer not found with id: " + id
+                        )
+                );
 
         trainerRepository.delete(trainer);
     }

@@ -5,6 +5,7 @@ import com.example.gymmembershipapi.dto.TrainingProgramResponseDto;
 import com.example.gymmembershipapi.dto.UpdateTrainingProgramRequestDto;
 import com.example.gymmembershipapi.entity.TrainerEntity;
 import com.example.gymmembershipapi.entity.TrainingProgramEntity;
+import com.example.gymmembershipapi.exception.ResourceNotFoundException;
 import com.example.gymmembershipapi.mapper.TrainingProgramMapper;
 import com.example.gymmembershipapi.repository.TrainerRepository;
 import com.example.gymmembershipapi.repository.TrainingProgramRepository;
@@ -25,9 +26,12 @@ public class TrainingProgramService {
     ) {
         TrainerEntity trainer = trainerRepository
                 .findById(requestDto.getTrainerId())
-                .orElseThrow(() -> new RuntimeException(
-                        "Trainer not found with id: " + requestDto.getTrainerId()
-                ));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Trainer not found with id: "
+                                        + requestDto.getTrainerId()
+                        )
+                );
 
         TrainingProgramEntity trainingProgram =
                 TrainingProgramMapper.toEntity(requestDto, trainer);
@@ -41,9 +45,11 @@ public class TrainingProgramService {
     public TrainingProgramResponseDto getById(Long id) {
         TrainingProgramEntity trainingProgram =
                 trainingProgramRepository.findById(id)
-                        .orElseThrow(() -> new RuntimeException(
-                                "Training program not found with id: " + id
-                        ));
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Training program not found with id: " + id
+                                )
+                        );
 
         return TrainingProgramMapper.toResponseDto(trainingProgram);
     }
@@ -54,6 +60,7 @@ public class TrainingProgramService {
                 .map(TrainingProgramMapper::toResponseDto)
                 .toList();
     }
+
     public TrainingProgramResponseDto update(
             Long id,
             UpdateTrainingProgramRequestDto requestDto
@@ -61,13 +68,18 @@ public class TrainingProgramService {
         TrainingProgramEntity trainingProgram =
                 trainingProgramRepository.findById(id)
                         .orElseThrow(() ->
-                                new RuntimeException("Training program not found")
+                                new ResourceNotFoundException(
+                                        "Training program not found with id: " + id
+                                )
                         );
 
         TrainerEntity trainer = trainerRepository
                 .findById(requestDto.getTrainerId())
                 .orElseThrow(() ->
-                        new RuntimeException("Trainer not found")
+                        new ResourceNotFoundException(
+                                "Trainer not found with id: "
+                                        + requestDto.getTrainerId()
+                        )
                 );
 
         TrainingProgramMapper.updateEntity(
@@ -86,7 +98,9 @@ public class TrainingProgramService {
         TrainingProgramEntity trainingProgram =
                 trainingProgramRepository.findById(id)
                         .orElseThrow(() ->
-                                new RuntimeException("Training program not found")
+                                new ResourceNotFoundException(
+                                        "Training program not found with id: " + id
+                                )
                         );
 
         trainingProgramRepository.delete(trainingProgram);

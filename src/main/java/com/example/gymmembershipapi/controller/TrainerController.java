@@ -4,6 +4,7 @@ import com.example.gymmembershipapi.dto.CreateTrainerRequestDto;
 import com.example.gymmembershipapi.dto.TrainerResponseDto;
 import com.example.gymmembershipapi.dto.UpdateTrainerRequestDto;
 import com.example.gymmembershipapi.service.TrainerService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public class TrainerController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public TrainerResponseDto create(
-            @RequestBody CreateTrainerRequestDto requestDto
+           @Valid @RequestBody CreateTrainerRequestDto requestDto
     ) {
         return trainerService.create(requestDto);
     }
@@ -37,7 +38,7 @@ public class TrainerController {
     @PutMapping("/{id}")
     public TrainerResponseDto update(
             @PathVariable Long id,
-            @RequestBody UpdateTrainerRequestDto requestDto
+           @Valid @RequestBody UpdateTrainerRequestDto requestDto
     ) {
         return trainerService.update(id, requestDto);
     }

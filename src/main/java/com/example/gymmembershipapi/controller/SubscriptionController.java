@@ -4,6 +4,7 @@ import com.example.gymmembershipapi.dto.CreateSubscriptionRequestDto;
 import com.example.gymmembershipapi.dto.SubscriptionResponseDto;
 import com.example.gymmembershipapi.dto.UpdateSubscriptionRequestDto;
 import com.example.gymmembershipapi.service.SubscriptionService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public class SubscriptionController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public SubscriptionResponseDto create(
-            @RequestBody CreateSubscriptionRequestDto requestDto
+            @Valid @RequestBody CreateSubscriptionRequestDto requestDto
     ) {
         return subscriptionService.create(requestDto);
     }
@@ -37,7 +38,7 @@ public class SubscriptionController {
     @PutMapping("/{id}")
     public SubscriptionResponseDto update(
             @PathVariable Long id,
-            @RequestBody UpdateSubscriptionRequestDto requestDto
+           @Valid @RequestBody UpdateSubscriptionRequestDto requestDto
     ) {
         return subscriptionService.update(id, requestDto);
     }

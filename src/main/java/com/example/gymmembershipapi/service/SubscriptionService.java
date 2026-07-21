@@ -6,6 +6,7 @@ import com.example.gymmembershipapi.dto.UpdateSubscriptionRequestDto;
 import com.example.gymmembershipapi.entity.MemberEntity;
 import com.example.gymmembershipapi.entity.SubscriptionEntity;
 import com.example.gymmembershipapi.entity.TrainingProgramEntity;
+import com.example.gymmembershipapi.exception.ResourceNotFoundException;
 import com.example.gymmembershipapi.mapper.SubscriptionMapper;
 import com.example.gymmembershipapi.repository.MemberRepository;
 import com.example.gymmembershipapi.repository.SubscriptionRepository;
@@ -28,22 +29,29 @@ public class SubscriptionService {
     ) {
         MemberEntity member = memberRepository
                 .findById(requestDto.getMemberId())
-                .orElseThrow(() -> new RuntimeException(
-                        "Member not found with id: " + requestDto.getMemberId()
-                ));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Member not found with id: "
+                                        + requestDto.getMemberId()
+                        )
+                );
 
-        TrainingProgramEntity trainingProgram = trainingProgramRepository
-                .findById(requestDto.getTrainingProgramId())
-                .orElseThrow(() -> new RuntimeException(
-                        "Training program not found with id: "
-                                + requestDto.getTrainingProgramId()
-                ));
+        TrainingProgramEntity trainingProgram =
+                trainingProgramRepository
+                        .findById(requestDto.getTrainingProgramId())
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Training program not found with id: "
+                                                + requestDto.getTrainingProgramId()
+                                )
+                        );
 
-        SubscriptionEntity subscription = SubscriptionMapper.toEntity(
-                requestDto,
-                member,
-                trainingProgram
-        );
+        SubscriptionEntity subscription =
+                SubscriptionMapper.toEntity(
+                        requestDto,
+                        member,
+                        trainingProgram
+                );
 
         SubscriptionEntity savedSubscription =
                 subscriptionRepository.save(subscription);
@@ -52,11 +60,13 @@ public class SubscriptionService {
     }
 
     public SubscriptionResponseDto getById(Long id) {
-        SubscriptionEntity subscription = subscriptionRepository
-                .findById(id)
-                .orElseThrow(() -> new RuntimeException(
-                        "Subscription not found with id: " + id
-                ));
+        SubscriptionEntity subscription =
+                subscriptionRepository.findById(id)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Subscription not found with id: " + id
+                                )
+                        );
 
         return SubscriptionMapper.toResponseDto(subscription);
     }
@@ -67,6 +77,7 @@ public class SubscriptionService {
                 .map(SubscriptionMapper::toResponseDto)
                 .toList();
     }
+
     public SubscriptionResponseDto update(
             Long id,
             UpdateSubscriptionRequestDto requestDto
@@ -74,20 +85,28 @@ public class SubscriptionService {
         SubscriptionEntity subscription =
                 subscriptionRepository.findById(id)
                         .orElseThrow(() ->
-                                new RuntimeException("Subscription not found")
+                                new ResourceNotFoundException(
+                                        "Subscription not found with id: " + id
+                                )
                         );
 
         MemberEntity member = memberRepository
                 .findById(requestDto.getMemberId())
                 .orElseThrow(() ->
-                        new RuntimeException("Member not found")
+                        new ResourceNotFoundException(
+                                "Member not found with id: "
+                                        + requestDto.getMemberId()
+                        )
                 );
 
         TrainingProgramEntity trainingProgram =
                 trainingProgramRepository
                         .findById(requestDto.getTrainingProgramId())
                         .orElseThrow(() ->
-                                new RuntimeException("Training program not found")
+                                new ResourceNotFoundException(
+                                        "Training program not found with id: "
+                                                + requestDto.getTrainingProgramId()
+                                )
                         );
 
         SubscriptionMapper.updateEntity(
@@ -107,7 +126,9 @@ public class SubscriptionService {
         SubscriptionEntity subscription =
                 subscriptionRepository.findById(id)
                         .orElseThrow(() ->
-                                new RuntimeException("Subscription not found")
+                                new ResourceNotFoundException(
+                                        "Subscription not found with id: " + id
+                                )
                         );
 
         subscriptionRepository.delete(subscription);

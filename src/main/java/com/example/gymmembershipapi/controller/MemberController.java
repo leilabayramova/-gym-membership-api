@@ -7,7 +7,7 @@ import com.example.gymmembershipapi.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
+import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -20,7 +20,7 @@ public class MemberController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public MemberResponseDto create(
-            @RequestBody CreateMemberRequestDto requestDto
+            @Valid @RequestBody CreateMemberRequestDto requestDto
     ) {
         return memberService.create(requestDto);
     }
@@ -38,7 +38,7 @@ public class MemberController {
     @PutMapping("/{id}")
     public MemberResponseDto update(
             @PathVariable Long id,
-            @RequestBody UpdateMemberRequestDto requestDto
+            @Valid @RequestBody UpdateMemberRequestDto requestDto
     ) {
         return memberService.update(id, requestDto);
     }

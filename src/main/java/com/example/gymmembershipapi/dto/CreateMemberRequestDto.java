@@ -1,15 +1,28 @@
 package com.example.gymmembershipapi.dto;
 
-import lombok.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class CreateMemberRequestDto {
 
+    @NotBlank(message = "Full name is required")
+    @Size(min = 2, max = 100, message = "Full name must contain 2-100 characters")
     private String fullName;
+
+    @NotBlank(message = "Email is required")
+    @Email(message = "Email format is invalid")
     private String email;
+
+    @NotBlank(message = "Phone number is required")
+    @Pattern(
+            regexp = "^\\+?[0-9]{9,15}$",
+            message = "Phone number format is invalid"
+    )
     private String phoneNumber;
 }
