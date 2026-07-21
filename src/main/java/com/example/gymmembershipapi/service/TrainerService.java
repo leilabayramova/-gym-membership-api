@@ -9,9 +9,12 @@ import com.example.gymmembershipapi.exception.ResourceNotFoundException;
 import com.example.gymmembershipapi.mapper.TrainerMapper;
 import com.example.gymmembershipapi.repository.TrainerRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -44,11 +47,20 @@ public class TrainerService {
         return TrainerMapper.toResponseDto(trainer);
     }
 
-    public List<TrainerResponseDto> getAll() {
-        return trainerRepository.findAll()
-                .stream()
-                .map(TrainerMapper::toResponseDto)
-                .toList();
+    public Page<TrainerResponseDto> getAll(
+            int page,
+            int size,
+            String sortBy,
+            String direction
+    ) {
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return trainerRepository.findAll(pageable)
+                .map(TrainerMapper::toResponseDto);
     }
 
     public TrainerResponseDto update(

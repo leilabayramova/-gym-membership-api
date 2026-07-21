@@ -6,10 +6,10 @@ import com.example.gymmembershipapi.dto.UpdateTrainerRequestDto;
 import com.example.gymmembershipapi.service.TrainerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/trainers")
@@ -32,8 +32,13 @@ public class TrainerController {
     }
 
     @GetMapping
-    public List<TrainerResponseDto> getAll() {
-        return trainerService.getAll();
+    public Page<TrainerResponseDto> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
+    ) {
+        return trainerService.getAll(page, size, sortBy, direction);
     }
     @PutMapping("/{id}")
     public TrainerResponseDto update(

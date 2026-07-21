@@ -13,8 +13,10 @@ import com.example.gymmembershipapi.repository.SubscriptionRepository;
 import com.example.gymmembershipapi.repository.TrainingProgramRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 @Service
 @RequiredArgsConstructor
@@ -71,11 +73,20 @@ public class SubscriptionService {
         return SubscriptionMapper.toResponseDto(subscription);
     }
 
-    public List<SubscriptionResponseDto> getAll() {
-        return subscriptionRepository.findAll()
-                .stream()
-                .map(SubscriptionMapper::toResponseDto)
-                .toList();
+    public Page<SubscriptionResponseDto> getAll(
+            int page,
+            int size,
+            String sortBy,
+            String direction
+    ) {
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return subscriptionRepository.findAll(pageable)
+                .map(SubscriptionMapper::toResponseDto);
     }
 
     public SubscriptionResponseDto update(

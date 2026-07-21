@@ -10,8 +10,10 @@ import com.example.gymmembershipapi.mapper.MemberMapper;
 import com.example.gymmembershipapi.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 @Service
 @RequiredArgsConstructor
@@ -44,11 +46,20 @@ public class MemberService {
         return MemberMapper.toResponseDto(member);
     }
 
-    public List<MemberResponseDto> getAll() {
-        return memberRepository.findAll()
-                .stream()
-                .map(MemberMapper::toResponseDto)
-                .toList();
+    public Page<MemberResponseDto> getAll(
+            int page,
+            int size,
+            String sortBy,
+            String direction
+    ) {
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return memberRepository.findAll(pageable)
+                .map(MemberMapper::toResponseDto);
     }
 
     public MemberResponseDto update(
