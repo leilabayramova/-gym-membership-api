@@ -1,9 +1,8 @@
 package com.example.gymmembershipapi.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +10,9 @@ import java.util.List;
 @Table(name = "trainers")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class TrainerEntity {
 
     @Id

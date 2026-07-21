@@ -1,4 +1,4 @@
-package com.example.gymmembership.repository;
+package com.example.gymmembershipapi.repository;
 
 import com.example.gymmembershipapi.entity.TrainingProgramEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
