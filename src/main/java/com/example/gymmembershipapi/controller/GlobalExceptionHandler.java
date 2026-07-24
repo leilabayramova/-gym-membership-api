@@ -1,6 +1,7 @@
 package com.example.gymmembershipapi.controller;
 
 import com.example.gymmembershipapi.exception.DuplicateResourceException;
+import com.example.gymmembershipapi.exception.ResourceInUseException;
 import com.example.gymmembershipapi.exception.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -71,6 +72,21 @@ public class GlobalExceptionHandler {
                 .message("Validation failed")
                 .path(request.getRequestURI())
                 .validationErrors(validationErrors)
+                .build();
+    }
+
+    @ExceptionHandler(ResourceInUseException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleResourceInUseException(
+            ResourceInUseException exception,
+            HttpServletRequest request
+    ) {
+        return ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.CONFLICT.value())
+                .error(HttpStatus.CONFLICT.getReasonPhrase())
+                .message(exception.getMessage())
+                .path(request.getRequestURI())
                 .build();
     }
 }

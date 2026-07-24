@@ -31,6 +31,7 @@ public class TrainerEntity {
     @Column(nullable = false)
     private String specialization;
 
+    @Builder.Default
     @OneToMany(mappedBy = "trainer")
-    private List <TrainingProgramEntity> trainingPrograms = new ArrayList<>();
+    private List<TrainingProgramEntity> trainingPrograms = new ArrayList<>();
 }

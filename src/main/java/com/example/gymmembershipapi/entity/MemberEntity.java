@@ -32,6 +32,7 @@ public class MemberEntity {
     @Column(nullable = false)
     private LocalDate registrationDate;
 
+    @Builder.Default
     @OneToMany(mappedBy = "member")
     private List<SubscriptionEntity> subscriptions = new ArrayList<>();
 }

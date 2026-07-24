@@ -5,9 +5,11 @@ import com.example.gymmembershipapi.dto.TrainerResponseDto;
 import com.example.gymmembershipapi.dto.UpdateTrainerRequestDto;
 import com.example.gymmembershipapi.entity.TrainerEntity;
 import com.example.gymmembershipapi.exception.DuplicateResourceException;
+import com.example.gymmembershipapi.exception.ResourceInUseException;
 import com.example.gymmembershipapi.exception.ResourceNotFoundException;
 import com.example.gymmembershipapi.mapper.TrainerMapper;
 import com.example.gymmembershipapi.repository.TrainerRepository;
+import com.example.gymmembershipapi.repository.TrainingProgramRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Service;
 public class TrainerService {
 
     private final TrainerRepository trainerRepository;
+    private final TrainingProgramRepository trainingProgramRepository;
 
     public TrainerResponseDto create(CreateTrainerRequestDto requestDto) {
 
@@ -97,6 +100,12 @@ public class TrainerService {
                                 "Trainer not found with id: " + id
                         )
                 );
+
+        if (trainingProgramRepository.existsByTrainerId(id)) {
+            throw new ResourceInUseException(
+                    "Trainer cannot be deleted because related training programs exist"
+            );
+        }
 
         trainerRepository.delete(trainer);
     }

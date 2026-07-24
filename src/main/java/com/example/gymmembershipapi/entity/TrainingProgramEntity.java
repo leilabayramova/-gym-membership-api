@@ -36,6 +36,7 @@ public class TrainingProgramEntity {
     @JoinColumn(name = "trainer_id", nullable = false)
     private TrainerEntity trainer;
 
+    @Builder.Default
     @OneToMany(mappedBy = "trainingProgram")
     private List<SubscriptionEntity> subscriptions = new ArrayList<>();
 }
