@@ -1,6 +1,7 @@
 package com.example.gymmembershipapi.controller;
 
 import com.example.gymmembershipapi.exception.DuplicateResourceException;
+import com.example.gymmembershipapi.exception.ErrorResponse;
 import com.example.gymmembershipapi.exception.ResourceInUseException;
 import com.example.gymmembershipapi.exception.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
