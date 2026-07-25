@@ -1,27 +1,42 @@
 package com.example.gymmembershipapi.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@Schema(description = "Trainer creation request")
 public class CreateTrainerRequestDto {
 
-    @NotBlank(message = "Full name is required")
-    @Size(min = 2, max = 100,
-            message = "Full name must contain 2-100 characters")
+    @NotBlank
+    @Schema(
+            description = "Trainer's full name",
+            example = "Aysel Mammadova"
+    )
     private String fullName;
 
-    @NotBlank(message = "Email is required")
-    @Email(message = "Email format is invalid")
+    @NotBlank
+    @Email
+    @Schema(
+            description = "Trainer's unique email address",
+            example = "aysel.mammadova@gmail.com"
+    )
     private String email;
 
-    @NotBlank(message = "Phone number is required")
+    @NotBlank
+    @Schema(
+            description = "Trainer's phone number",
+            example = "+994501234567"
+    )
     private String phoneNumber;
 
-    @NotBlank(message = "Specialization is required")
+    @NotBlank
+    @Schema(
+            description = "Trainer's specialization",
+            example = "Fitness"
+    )
     private String specialization;
 }

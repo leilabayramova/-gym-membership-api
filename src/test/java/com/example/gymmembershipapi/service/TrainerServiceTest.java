@@ -5,8 +5,10 @@ import com.example.gymmembershipapi.dto.TrainerResponseDto;
 import com.example.gymmembershipapi.dto.UpdateTrainerRequestDto;
 import com.example.gymmembershipapi.entity.TrainerEntity;
 import com.example.gymmembershipapi.exception.DuplicateResourceException;
+import com.example.gymmembershipapi.exception.ResourceInUseException;
 import com.example.gymmembershipapi.exception.ResourceNotFoundException;
 import com.example.gymmembershipapi.repository.TrainerRepository;
+import com.example.gymmembershipapi.repository.TrainingProgramRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -23,6 +26,9 @@ class TrainerServiceTest {
 
     @Mock
     private TrainerRepository trainerRepository;
+
+    @Mock
+    private TrainingProgramRepository trainingProgramRepository;
 
     @InjectMocks
     private TrainerService trainerService;
@@ -60,7 +66,8 @@ class TrainerServiceTest {
         assertEquals("Leyla Aliyeva", response.getFullName());
         assertEquals("leyla@example.com", response.getEmail());
 
-        verify(trainerRepository).save(any(TrainerEntity.class));
+        verify(trainerRepository)
+                .save(any(TrainerEntity.class));
     }
 
     @Test
@@ -147,26 +154,58 @@ class TrainerServiceTest {
         TrainerResponseDto response =
                 trainerService.update(1L, requestDto);
 
+        assertNotNull(response);
         assertEquals("New Name", response.getFullName());
         assertEquals("new@example.com", response.getEmail());
+        assertEquals("0502222222", response.getPhoneNumber());
         assertEquals("CrossFit", response.getSpecialization());
 
-        verify(trainerRepository).save(trainer);
+        verify(trainerRepository)
+                .save(trainer);
     }
 
     @Test
     void delete_shouldDeleteTrainer() {
         TrainerEntity trainer = TrainerEntity.builder()
                 .id(1L)
-                .fullName("Leyla Aliyeva")
-                .email("leyla@example.com")
                 .build();
 
         when(trainerRepository.findById(1L))
                 .thenReturn(Optional.of(trainer));
 
+        when(trainingProgramRepository.existsByTrainerId(1L))
+                .thenReturn(false);
+
         trainerService.delete(1L);
 
-        verify(trainerRepository).delete(trainer);
+        verify(trainingProgramRepository)
+                .existsByTrainerId(1L);
+
+        verify(trainerRepository)
+                .delete(trainer);
+    }
+
+    @Test
+    void delete_shouldThrowExceptionWhenTrainerHasPrograms() {
+        TrainerEntity trainer = TrainerEntity.builder()
+                .id(1L)
+                .build();
+
+        when(trainerRepository.findById(1L))
+                .thenReturn(Optional.of(trainer));
+
+        when(trainingProgramRepository.existsByTrainerId(1L))
+                .thenReturn(true);
+
+        assertThrows(
+                ResourceInUseException.class,
+                () -> trainerService.delete(1L)
+        );
+
+        verify(trainingProgramRepository)
+                .existsByTrainerId(1L);
+
+        verify(trainerRepository, never())
+                .delete(any(TrainerEntity.class));
     }
 }
