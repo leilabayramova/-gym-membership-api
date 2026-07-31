@@ -2,6 +2,7 @@ package com.example.gymmembershipapi.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
@@ -9,6 +10,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -60,4 +62,11 @@ public class CreateTrainingProgramRequestDto {
             example = "1"
     )
     private Long trainerId;
+
+    @NotEmpty(message = "At least one category is required")
+    @Schema(
+            description = "Category ids assigned to the training program",
+            example = "[1, 2]"
+    )
+    private Set<@Positive Long> categoryIds;
 }

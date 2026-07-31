@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -52,4 +53,10 @@ public class TrainingProgramResponseDto {
             example = "1"
     )
     private Long trainerId;
+
+    @Schema(
+            description = "Category ids assigned to the training program",
+            example = "[1, 2]"
+    )
+    private Set<Long> categoryIds;
 }

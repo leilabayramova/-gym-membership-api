@@ -3,19 +3,23 @@ package com.example.gymmembershipapi.service;
 import com.example.gymmembershipapi.dto.CreateTrainingProgramRequestDto;
 import com.example.gymmembershipapi.dto.TrainingProgramResponseDto;
 import com.example.gymmembershipapi.dto.UpdateTrainingProgramRequestDto;
+import com.example.gymmembershipapi.entity.CategoryEntity;
 import com.example.gymmembershipapi.entity.TrainerEntity;
 import com.example.gymmembershipapi.entity.TrainingProgramEntity;
 import com.example.gymmembershipapi.exception.ResourceNotFoundException;
 import com.example.gymmembershipapi.mapper.TrainingProgramMapper;
+import com.example.gymmembershipapi.repository.CategoryRepository;
 import com.example.gymmembershipapi.repository.TrainerRepository;
 import com.example.gymmembershipapi.repository.TrainingProgramRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +27,7 @@ public class TrainingProgramService {
 
     private final TrainingProgramRepository trainingProgramRepository;
     private final TrainerRepository trainerRepository;
+    private final CategoryRepository categoryRepository;
 
     public TrainingProgramResponseDto create(
             CreateTrainingProgramRequestDto requestDto
@@ -36,8 +41,22 @@ public class TrainingProgramService {
                         )
                 );
 
+        Set<CategoryEntity> categories = new HashSet<>(
+                categoryRepository.findAllById(requestDto.getCategoryIds())
+        );
+
+        if (categories.size() != requestDto.getCategoryIds().size()) {
+            throw new ResourceNotFoundException(
+                    "One or more categories were not found"
+            );
+        }
+
         TrainingProgramEntity trainingProgram =
-                TrainingProgramMapper.toEntity(requestDto, trainer);
+                TrainingProgramMapper.toEntity(
+                        requestDto,
+                        trainer,
+                        categories
+                );
 
         TrainingProgramEntity savedTrainingProgram =
                 trainingProgramRepository.save(trainingProgram);
