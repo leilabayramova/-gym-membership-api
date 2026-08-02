@@ -19,6 +19,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/training-programs")
 @RequiredArgsConstructor
@@ -77,6 +80,62 @@ public class TrainingProgramController {
     }
 
     @Operation(
+            summary = "Filter training programs",
+            description = "Filters training programs by trainer, category, price range and maximum duration"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Filtered training programs returned successfully",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = TrainingProgramResponseDto.class
+                            )
+                    )
+            )
+    })
+    @GetMapping("/filter")
+    public List<TrainingProgramResponseDto> filter(
+            @Parameter(
+                    description = "Trainer identifier",
+                    example = "1"
+            )
+            @RequestParam Long trainerId,
+
+            @Parameter(
+                    description = "Category identifier",
+                    example = "1"
+            )
+            @RequestParam Long categoryId,
+
+            @Parameter(
+                    description = "Minimum monthly price",
+                    example = "50.00"
+            )
+            @RequestParam BigDecimal minPrice,
+
+            @Parameter(
+                    description = "Maximum monthly price",
+                    example = "150.00"
+            )
+            @RequestParam BigDecimal maxPrice,
+
+            @Parameter(
+                    description = "Maximum program duration in weeks",
+                    example = "12"
+            )
+            @RequestParam Integer maxDurationInWeeks
+    ) {
+        return trainingProgramService.filter(
+                trainerId,
+                categoryId,
+                minPrice,
+                maxPrice,
+                maxDurationInWeeks
+        );
+    }
+    @Operation(
             summary = "Get training program by id",
             description = "Returns a training program using the provided id"
     )
@@ -102,6 +161,7 @@ public class TrainingProgramController {
                     )
             )
     })
+    
     @GetMapping("/{id}")
     public TrainingProgramResponseDto getById(
             @Parameter(

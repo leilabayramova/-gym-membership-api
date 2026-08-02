@@ -18,7 +18,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -135,5 +137,24 @@ public class TrainingProgramService {
                         );
 
         trainingProgramRepository.delete(trainingProgram);
+    }
+
+    public List<TrainingProgramResponseDto> filter(
+            Long trainerId,
+            Long categoryId,
+            BigDecimal minPrice,
+            BigDecimal maxPrice,
+            Integer maxDurationInWeeks
+    ) {
+        return trainingProgramRepository.findByComplexFilter(
+                        trainerId,
+                        categoryId,
+                        minPrice,
+                        maxPrice,
+                        maxDurationInWeeks
+                )
+                .stream()
+                .map(TrainingProgramMapper::toResponseDto)
+                .toList();
     }
 }
