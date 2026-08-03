@@ -135,6 +135,63 @@ public class TrainingProgramController {
                 maxDurationInWeeks
         );
     }
+
+    @Operation(
+            summary = "Search training programs",
+            description = "Dynamically searches training programs using optional filter parameters"
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "Search results returned successfully"
+    )
+    @GetMapping("/search")
+    public List<TrainingProgramResponseDto> search(
+            @Parameter(
+                    description = "Program name or part of the name",
+                    example = "Cross"
+            )
+            @RequestParam(required = false) String name,
+
+            @Parameter(
+                    description = "Trainer identifier",
+                    example = "1"
+            )
+            @RequestParam(required = false) Long trainerId,
+
+            @Parameter(
+                    description = "Category identifier",
+                    example = "1"
+            )
+            @RequestParam(required = false) Long categoryId,
+
+            @Parameter(
+                    description = "Minimum monthly price",
+                    example = "50.00"
+            )
+            @RequestParam(required = false) BigDecimal minPrice,
+
+            @Parameter(
+                    description = "Maximum monthly price",
+                    example = "150.00"
+            )
+            @RequestParam(required = false) BigDecimal maxPrice,
+
+            @Parameter(
+                    description = "Maximum duration in weeks",
+                    example = "12"
+            )
+            @RequestParam(required = false) Integer maxDurationInWeeks
+    ) {
+        return trainingProgramService.search(
+                name,
+                trainerId,
+                categoryId,
+                minPrice,
+                maxPrice,
+                maxDurationInWeeks
+        );
+    }
+
     @Operation(
             summary = "Get training program by id",
             description = "Returns a training program using the provided id"

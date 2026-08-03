@@ -2,6 +2,7 @@ package com.example.gymmembershipapi.repository;
 
 import com.example.gymmembershipapi.entity.TrainingProgramEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -9,7 +10,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface TrainingProgramRepository
-        extends JpaRepository<TrainingProgramEntity, Long> {
+        extends JpaRepository<TrainingProgramEntity, Long>,
+        JpaSpecificationExecutor<TrainingProgramEntity> {
 
     boolean existsByTrainerId(Long trainerId);
 

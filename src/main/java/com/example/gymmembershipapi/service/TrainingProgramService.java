@@ -11,11 +11,13 @@ import com.example.gymmembershipapi.mapper.TrainingProgramMapper;
 import com.example.gymmembershipapi.repository.CategoryRepository;
 import com.example.gymmembershipapi.repository.TrainerRepository;
 import com.example.gymmembershipapi.repository.TrainingProgramRepository;
+import com.example.gymmembershipapi.specification.TrainingProgramSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -153,6 +155,29 @@ public class TrainingProgramService {
                         maxPrice,
                         maxDurationInWeeks
                 )
+                .stream()
+                .map(TrainingProgramMapper::toResponseDto)
+                .toList();
+    }
+    public List<TrainingProgramResponseDto> search(
+            String name,
+            Long trainerId,
+            Long categoryId,
+            BigDecimal minPrice,
+            BigDecimal maxPrice,
+            Integer maxDurationInWeeks
+    ) {
+        Specification<TrainingProgramEntity> specification =
+                TrainingProgramSpecification.withFilters(
+                        name,
+                        trainerId,
+                        categoryId,
+                        minPrice,
+                        maxPrice,
+                        maxDurationInWeeks
+                );
+
+        return trainingProgramRepository.findAll(specification)
                 .stream()
                 .map(TrainingProgramMapper::toResponseDto)
                 .toList();
