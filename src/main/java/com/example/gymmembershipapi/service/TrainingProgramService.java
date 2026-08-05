@@ -182,4 +182,10 @@ public class TrainingProgramService {
                 .map(TrainingProgramMapper::toResponseDto)
                 .toList();
     }
+    public List<TrainingProgramResponseDto> getAllWithDetails() {
+        return trainingProgramRepository.findAllWithDetails()
+                .stream()
+                .map(TrainingProgramMapper::toResponseDto)
+                .toList();
+    }
 }

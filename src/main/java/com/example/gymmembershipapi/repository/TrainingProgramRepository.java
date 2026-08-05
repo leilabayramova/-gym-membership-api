@@ -1,6 +1,7 @@
 package com.example.gymmembershipapi.repository;
 
 import com.example.gymmembershipapi.entity.TrainingProgramEntity;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -14,6 +15,13 @@ public interface TrainingProgramRepository
         JpaSpecificationExecutor<TrainingProgramEntity> {
 
     boolean existsByTrainerId(Long trainerId);
+
+    @EntityGraph(attributePaths = {"trainer", "categories"})
+    @Query("""
+            SELECT DISTINCT trainingProgram
+            FROM TrainingProgramEntity trainingProgram
+            """)
+    List<TrainingProgramEntity> findAllWithDetails();
 
     @Query("""
             SELECT DISTINCT trainingProgram

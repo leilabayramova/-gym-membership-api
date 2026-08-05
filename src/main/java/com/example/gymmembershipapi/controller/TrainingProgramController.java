@@ -193,6 +193,19 @@ public class TrainingProgramController {
     }
 
     @Operation(
+            summary = "Get optimized training programs",
+            description = "Returns training programs with trainer and category details while preventing N+1 queries"
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "Optimized training program list returned successfully"
+    )
+    @GetMapping("/optimized")
+    public List<TrainingProgramResponseDto> getAllOptimized() {
+        return trainingProgramService.getAllWithDetails();
+    }
+
+    @Operation(
             summary = "Get training program by id",
             description = "Returns a training program using the provided id"
     )
