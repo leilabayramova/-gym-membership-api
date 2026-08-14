@@ -3,12 +3,14 @@ package com.example.gymmembershipapi.security;
 import com.example.gymmembershipapi.entity.UserEntity;
 import com.example.gymmembershipapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Locale;
 
 @Service
@@ -31,9 +33,14 @@ public class CustomUserDetailsService implements UserDetailsService {
                         )
                 );
 
-        return User.withUsername(user.getEmail())
-                .password(user.getPassword())
-                .roles(user.getRole().name())
-                .build();
+        return new User(
+                user.getEmail(),
+                user.getPassword(),
+                List.of(
+                        new SimpleGrantedAuthority(
+                                "ROLE_" + user.getRole().name()
+                        )
+                )
+        );
     }
 }
