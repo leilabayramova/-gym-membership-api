@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/gym_membership_db
+    username: postgres
+    password: 1234
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true

@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/gym_membership_db
+    username: postgres
+    password: YOUR_PASSWORD
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+server:
+  port: 8383
+
+jwt:
+  secret: ${JWT_SECRET:your-base64-secret-key}
+  expiration: ${JWT_EXPIRATION:3600000}
