@@ -3,9 +3,11 @@ package com.example.gymmembershipapi.service;
 import com.example.gymmembershipapi.dto.CreateTrainingProgramRequestDto;
 import com.example.gymmembershipapi.dto.TrainingProgramResponseDto;
 import com.example.gymmembershipapi.dto.UpdateTrainingProgramRequestDto;
+import com.example.gymmembershipapi.entity.CategoryEntity;
 import com.example.gymmembershipapi.entity.TrainerEntity;
 import com.example.gymmembershipapi.entity.TrainingProgramEntity;
 import com.example.gymmembershipapi.exception.ResourceNotFoundException;
+import com.example.gymmembershipapi.repository.CategoryRepository;
 import com.example.gymmembershipapi.repository.TrainerRepository;
 import com.example.gymmembershipapi.repository.TrainingProgramRepository;
 import org.junit.jupiter.api.Test;
@@ -15,7 +17,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -30,6 +34,9 @@ class TrainingProgramServiceTest {
     @Mock
     private TrainerRepository trainerRepository;
 
+    @Mock
+    private CategoryRepository categoryRepository;
+
     @InjectMocks
     private TrainingProgramService trainingProgramService;
 
@@ -43,6 +50,7 @@ class TrainingProgramServiceTest {
         requestDto.setDurationInWeeks(8);
         requestDto.setMonthlyPrice(new BigDecimal("120.00"));
         requestDto.setTrainerId(1L);
+        requestDto.setCategoryIds(Set.of(1L, 2L));
 
         TrainerEntity trainer = TrainerEntity.builder()
                 .id(1L)
@@ -52,6 +60,19 @@ class TrainingProgramServiceTest {
                 .specialization("Fitness")
                 .build();
 
+        CategoryEntity cardioCategory = CategoryEntity.builder()
+                .id(1L)
+                .name("CARDIO")
+                .build();
+
+        CategoryEntity strengthCategory = CategoryEntity.builder()
+                .id(2L)
+                .name("STRENGTH")
+                .build();
+
+        Set<CategoryEntity> categories =
+                Set.of(cardioCategory, strengthCategory);
+
         TrainingProgramEntity savedTrainingProgram =
                 TrainingProgramEntity.builder()
                         .id(1L)
@@ -60,10 +81,14 @@ class TrainingProgramServiceTest {
                         .durationInWeeks(8)
                         .monthlyPrice(new BigDecimal("120.00"))
                         .trainer(trainer)
+                        .categories(categories)
                         .build();
 
         when(trainerRepository.findById(1L))
                 .thenReturn(Optional.of(trainer));
+
+        when(categoryRepository.findAllById(requestDto.getCategoryIds()))
+                .thenReturn(List.of(cardioCategory, strengthCategory));
 
         when(trainingProgramRepository.save(
                 any(TrainingProgramEntity.class)
@@ -79,7 +104,11 @@ class TrainingProgramServiceTest {
                 new BigDecimal("120.00"),
                 response.getMonthlyPrice()
         );
+        assertEquals(Set.of(1L, 2L), response.getCategoryIds());
 
+        verify(trainerRepository).findById(1L);
+        verify(categoryRepository)
+                .findAllById(requestDto.getCategoryIds());
         verify(trainingProgramRepository)
                 .save(any(TrainingProgramEntity.class));
     }
@@ -98,6 +127,9 @@ class TrainingProgramServiceTest {
                 ResourceNotFoundException.class,
                 () -> trainingProgramService.create(requestDto)
         );
+
+        verify(categoryRepository, never())
+                .findAllById(any());
 
         verify(trainingProgramRepository, never())
                 .save(any(TrainingProgramEntity.class));

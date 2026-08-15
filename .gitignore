@@ -39,3 +39,4 @@ out/
 ### Application configuration ###
 src/main/resources/application.yaml
 .env
+uploads/

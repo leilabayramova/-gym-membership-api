@@ -5,7 +5,9 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "training_programs")
@@ -39,4 +41,13 @@ public class TrainingProgramEntity {
     @Builder.Default
     @OneToMany(mappedBy = "trainingProgram")
     private List<SubscriptionEntity> subscriptions = new ArrayList<>();
+
+    @Builder.Default
+    @ManyToMany
+    @JoinTable(
+            name = "training_program_categories",
+            joinColumns = @JoinColumn(name = "training_program_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+    private Set<CategoryEntity> categories = new HashSet<>();
 }
