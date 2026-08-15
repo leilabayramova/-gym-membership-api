@@ -1,11 +1,14 @@
 package com.example.gymmembershipapi.mapper;
 
+import com.example.gymmembershipapi.dto.CreateEnrollmentRequestDto;
 import com.example.gymmembershipapi.dto.CreateSubscriptionRequestDto;
 import com.example.gymmembershipapi.dto.SubscriptionResponseDto;
 import com.example.gymmembershipapi.dto.UpdateSubscriptionRequestDto;
 import com.example.gymmembershipapi.entity.MemberEntity;
 import com.example.gymmembershipapi.entity.SubscriptionEntity;
 import com.example.gymmembershipapi.entity.TrainingProgramEntity;
+
+import java.time.LocalDate;
 
 public interface SubscriptionMapper {
 
@@ -45,5 +48,34 @@ public interface SubscriptionMapper {
         subscription.setTrainingProgram(trainingProgram);
         subscription.setStartDate(requestDto.getStartDate());
         subscription.setEndDate(requestDto.getEndDate());
+    }
+
+    static SubscriptionEntity toEntity(
+            LocalDate startDate,
+            LocalDate endDate,
+            MemberEntity member,
+            TrainingProgramEntity trainingProgram
+    ) {
+        return SubscriptionEntity.builder()
+                .startDate(startDate)
+                .endDate(endDate)
+                .active(true)
+                .member(member)
+                .trainingProgram(trainingProgram)
+                .build();
+    }
+
+    static SubscriptionEntity toEntity(
+            CreateEnrollmentRequestDto requestDto,
+            MemberEntity member,
+            TrainingProgramEntity trainingProgram
+    ) {
+        return SubscriptionEntity.builder()
+                .startDate(requestDto.getStartDate())
+                .endDate(requestDto.getEndDate())
+                .active(true)
+                .member(member)
+                .trainingProgram(trainingProgram)
+                .build();
     }
 }

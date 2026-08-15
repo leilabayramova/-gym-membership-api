@@ -18,6 +18,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class SubscriptionService {
@@ -143,5 +146,20 @@ public class SubscriptionService {
 
         subscription.setActive(false);
         subscriptionRepository.save(subscription);
+    }
+
+    public int deactivateExpiredSubscriptions() {
+        List<SubscriptionEntity> expiredSubscriptions =
+                subscriptionRepository.findAllByActiveTrueAndEndDateBefore(
+                        LocalDate.now()
+                );
+
+        expiredSubscriptions.forEach(
+                subscription -> subscription.setActive(false)
+        );
+
+        subscriptionRepository.saveAll(expiredSubscriptions);
+
+        return expiredSubscriptions.size();
     }
 }

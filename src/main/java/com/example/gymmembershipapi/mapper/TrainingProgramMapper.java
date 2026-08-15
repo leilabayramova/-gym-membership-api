@@ -3,14 +3,18 @@ package com.example.gymmembershipapi.mapper;
 import com.example.gymmembershipapi.dto.CreateTrainingProgramRequestDto;
 import com.example.gymmembershipapi.dto.TrainingProgramResponseDto;
 import com.example.gymmembershipapi.dto.UpdateTrainingProgramRequestDto;
+import com.example.gymmembershipapi.entity.CategoryEntity;
 import com.example.gymmembershipapi.entity.TrainerEntity;
 import com.example.gymmembershipapi.entity.TrainingProgramEntity;
+
+import java.util.Set;
 
 public interface TrainingProgramMapper {
 
     static TrainingProgramEntity toEntity(
             CreateTrainingProgramRequestDto requestDto,
-            TrainerEntity trainer
+            TrainerEntity trainer,
+            Set<CategoryEntity> categories
     ) {
         return TrainingProgramEntity.builder()
                 .name(requestDto.getName())
@@ -18,6 +22,7 @@ public interface TrainingProgramMapper {
                 .durationInWeeks(requestDto.getDurationInWeeks())
                 .monthlyPrice(requestDto.getMonthlyPrice())
                 .trainer(trainer)
+                .categories(categories)
                 .build();
     }
 
@@ -31,8 +36,15 @@ public interface TrainingProgramMapper {
                 .durationInWeeks(trainingProgram.getDurationInWeeks())
                 .monthlyPrice(trainingProgram.getMonthlyPrice())
                 .trainerId(trainingProgram.getTrainer().getId())
+                .categoryIds(
+                        trainingProgram.getCategories()
+                                .stream()
+                                .map(CategoryEntity::getId)
+                                .collect(java.util.stream.Collectors.toSet())
+                )
                 .build();
     }
+
     static void updateEntity(
             TrainingProgramEntity trainingProgram,
             UpdateTrainingProgramRequestDto requestDto,
