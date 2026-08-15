@@ -13,6 +13,8 @@ import com.example.gymmembershipapi.repository.TrainerRepository;
 import com.example.gymmembershipapi.repository.TrainingProgramRepository;
 import com.example.gymmembershipapi.specification.TrainingProgramSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -67,7 +69,7 @@ public class TrainingProgramService {
 
         return TrainingProgramMapper.toResponseDto(savedTrainingProgram);
     }
-
+    @Cacheable(value = "trainingPrograms", key = "#id")
     public TrainingProgramResponseDto getById(Long id) {
         TrainingProgramEntity trainingProgram =
                 trainingProgramRepository.findById(id)
@@ -95,7 +97,7 @@ public class TrainingProgramService {
         return trainingProgramRepository.findAll(pageable)
                 .map(TrainingProgramMapper::toResponseDto);
     }
-
+    @CacheEvict(value = "trainingPrograms", key = "#id")
     public TrainingProgramResponseDto update(
             Long id,
             UpdateTrainingProgramRequestDto requestDto
@@ -128,7 +130,7 @@ public class TrainingProgramService {
 
         return TrainingProgramMapper.toResponseDto(updatedTrainingProgram);
     }
-
+    @CacheEvict(value = "trainingPrograms", key = "#id")
     public void delete(Long id) {
         TrainingProgramEntity trainingProgram =
                 trainingProgramRepository.findById(id)

@@ -26,15 +26,13 @@ public class EnrollmentService {
     private final MemberRepository memberRepository;
     private final SubscriptionRepository subscriptionRepository;
     private final TrainingProgramRepository trainingProgramRepository;
+    private final NotificationService notificationService;
 
     @Transactional
-    public EnrollmentResponseDto enroll(
-            CreateEnrollmentRequestDto requestDto
-    ) {
-        String normalizedEmail = requestDto.getMember()
-                .getEmail()
-                .trim()
-                .toLowerCase(Locale.ROOT);
+    public EnrollmentResponseDto enroll(CreateEnrollmentRequestDto requestDto) {
+
+        String normalizedEmail =
+                requestDto.getMember().getEmail().trim().toLowerCase();
 
         if (memberRepository.existsByEmailIgnoreCase(normalizedEmail)) {
             throw new DuplicateResourceException(
@@ -43,14 +41,14 @@ public class EnrollmentService {
         }
 
         TrainingProgramEntity trainingProgram =
-                trainingProgramRepository
-                        .findById(requestDto.getTrainingProgramId())
-                        .orElseThrow(() ->
-                                new ResourceNotFoundException(
-                                        "Training program not found with id: "
-                                                + requestDto.getTrainingProgramId()
-                                )
-                        );
+                trainingProgramRepository.findById(
+                        requestDto.getTrainingProgramId()
+                ).orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Training program not found with id: "
+                                        + requestDto.getTrainingProgramId()
+                        )
+                );
 
         requestDto.getMember().setEmail(normalizedEmail);
 
@@ -69,6 +67,11 @@ public class EnrollmentService {
 
         SubscriptionEntity savedSubscription =
                 subscriptionRepository.save(subscription);
+
+        notificationService.sendEnrollmentNotification(
+                savedMember.getEmail(),
+                trainingProgram.getName()
+        );
 
         return EnrollmentMapper.toResponseDto(
                 savedMember,
